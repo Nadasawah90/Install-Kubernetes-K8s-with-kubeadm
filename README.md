@@ -1,4 +1,4 @@
-# Install-Kubernetes-K8s-with-kubeadm
+# Install-Kubernetes-with-kubeadm
 ## Architecture 
 we wnat to set up a 5-node Kubernetes cluster on CentOS 9, with:
 
