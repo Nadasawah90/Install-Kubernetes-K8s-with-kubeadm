@@ -140,19 +140,20 @@ kubeadm join 192.168.56.14:6443 --token dcbil8.9i3jmt2trcrq6b4q --discovery-toke
 
 kubeadm join 192.168.56.14:6443 --token dcbil8.9i3jmt2trcrq6b4q --discovery-token-ca-cert-hash sha256:ac5a11b7426958fc6000d4c41f18803f7b8c4aa2f2ccb08e73071b8e1f662575
 
-<img width="975" height="201" alt="image" src="https://github.com/user-attachments/assets/7ff656c1-ab15-4482-a4c5-78e3b6f09313" />
 
-Verify HA cluster : 
+## Verify HA cluster : 
 
 kubectl get nodes
 kubectl get pods -n kube-system -o wide
 All control-plane pods (etcd, kube-apiserver, controller-manager, scheduler) should be Running on both masters.
 
+<img width="975" height="201" alt="image" src="https://github.com/user-attachments/assets/7ff656c1-ab15-4482-a4c5-78e3b6f09313" />
+
 <img width="975" height="201" alt="image" src="https://github.com/user-attachments/assets/371f5cf0-17b0-46d1-8785-29d42e3f499c" />
 
 <img width="975" height="389" alt="image" src="https://github.com/user-attachments/assets/48202fbe-b02e-4018-9ab8-41988a2b70a9" />
 
-Testing pods and create container nginx for testing : 
+### Testing pods and create container nginx for testing and found the pods take from CIDR network pod-network-cidr=10.244.0.0/16 as belwo  : 
 
 
 <img width="975" height="380" alt="image" src="https://github.com/user-attachments/assets/a4a21f31-f807-4723-ba86-dc1de35b1186" />
