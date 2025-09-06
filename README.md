@@ -33,7 +33,17 @@ backend kubernetes-backend
     server master02 192.168.56.16:6443 
     server master03 192.168.56.17:6443 
 
+
 <img width="650" height="214" alt="image" src="https://github.com/user-attachments/assets/dccd053a-1378-4f79-8dc4-8c4f05f362a3" />
+
+Hint : Hashing all the belwo lines to be not make the conflict with the new configuration which adding above : 
+
+<img width="742" height="580" alt="image" src="https://github.com/user-attachments/assets/964d92ba-487f-416e-ace4-81a37604e881" />
+
+<img width="913" height="570" alt="image" src="https://github.com/user-attachments/assets/9605dc94-51bf-489e-82a6-3d425bd51865" />
+
+
+
 
 3- Validate config 
 
