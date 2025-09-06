@@ -1,6 +1,6 @@
 # Install-Kubernetes-with-kubeadm
 ## Architecture 
-we wnat to set up a 5-node Kubernetes cluster on CentOS 9, with:
+We want to set up a 5-node Kubernetes cluster on CentOS 9, with:
 
 2 Master nodes (control plane, for HA) & 3 Worker nodes Using kubeadm as the bootstrap tool.
 
