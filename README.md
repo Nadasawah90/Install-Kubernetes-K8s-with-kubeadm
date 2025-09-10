@@ -205,3 +205,21 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
+
+###  issue with private ip 
+How to add the private IP
+
+Edit the file:
+
+sudo nano /var/lib/kubelet/kubeadm-flags.env
+
+
+Change the line to include --node-ip=<your-private-ip> (e.g. 192.168.56.18 & 192.168.56.19):
+
+KUBELET_KUBEADM_ARGS="--container-runtime-endpoint=unix:///var/run/cri-dockerd.sock --pod-infra-container-image=registry.k8s.io/pause:3.9 --node-ip=192.168.56.18"
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+<img width="1448" height="128" alt="image" src="https://github.com/user-attachments/assets/192fa027-9469-4d29-bf9d-e4a04c2bf881" />
+
