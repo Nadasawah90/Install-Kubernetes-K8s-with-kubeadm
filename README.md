@@ -1,16 +1,26 @@
 # Install-Kubernetes-with-kubeadm
+
 ## Architecture 
-We want to set up a 5-node Kubernetes cluster on CentOS 9, with:
 
-2 Master nodes (control plane, for HA) & 3 Worker nodes Using kubeadm as the bootstrap tool.
+Kubernetes 5-Node Cluster Setup (CentOS 9 + kubeadm + HAProxy)
 
-1 HAProxy to configure HAProxy on an external node . 
+Cluster Design:
 
-OS for all nodes : CentOS 9 
+- 2 Master Nodes (Control Plane, HA)
+
+- 3 Worker Nodes
+
+- 1 HAProxy Node (External load balancer for masters)
+
+- OS: CentOS 9 on all nodes
+
+- Bootstrap Tool: kubeadm
+
 
 ## Steps :
 
-### HAproxy 
+### 1- HAproxy 
+
 Set up HAProxy on CentOS to load balance traffic across 3 Kubernetes master nodes .
 
 1-  Install VM with HAproxy " lB" configuration using vagrant file with IP : 192.168.56.14
@@ -71,7 +81,7 @@ sudo haproxy -c -f /etc/haproxy/haproxy.cfg
 
 At this point, HAProxy should be distributing Kubernetes API requests to your 3 masters
 
-## K8s betweeen nodes 
+## 2- K8s betweeen nodes 
 
 Hostnames set (master1, master2, worker1, worker2, worker3)
 
@@ -152,14 +162,15 @@ sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 
 sudo systemctl enable --now kubelet
 
-### Now can inialize the Cluster  :
+## 3- Now we can inialize the Cluster  :
 
-## on master01 " 192.168.56.15"
+## 4-on master01 " 192.168.56.15"
 
-1- kubeadm init --control-plane-endpoint "192.168.56.14:6443" --upload-certs --pod-network-cidr=10.244.0.0/16
+ kubeadm init --control-plane-endpoint "192.168.56.14:6443" --upload-certs --pod-network-cidr=10.244.0.0/16
 
-This ensures ETCD certs include HA IP and ETCD will listen on HA IP for peers.
+IP address of HAProxy is 192.168.56.14 using port 6443 
 
+This ensures ETCD certs include HA IP and ETCD will listen on HA IP for peers
 
 and Verify etcd is listening 
 
@@ -171,11 +182,11 @@ shoudl appear ==> 2379 open on HA IP " 192.168.56.14"
 
 <img width="975" height="558" alt="image" src="https://github.com/user-attachments/assets/aa8a57ea-42f3-438f-af56-6b0dde2aa9a1" />
 
-2- Install Flannel:
+## 5- Install Flannel → It is important because it allows containers in the cluster to get IP addresses using the CIDR subnet, so they can start and communicate with each other.
 
 kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
 
-3- Copy your admin kubeconfig:
+## 6-  Copy your admin kubeconfig:
 
 mkdir -p $HOME/.kube
 
@@ -183,17 +194,17 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-## on Master02 
+## 7-  on Master02 
 
 kubeadm join 192.168.56.14:6443 --token dcbil8.9i3jmt2trcrq6b4q --discovery-token-ca-cert-hash sha256:ac5a11b7426958fc6000d4c41f18803f7b8c4aa2f2ccb08e73071b8e1f662575 --control-plane   --certificate-key 0b84f3882a2419d7f6c62946249d8e40ac89a364a190b22384bd66a05acacf60   --apiserver-advertise-address=192.168.56.16
 
 should be add apiserver with the ip of master node which will be joined to be using VIP of HAproxy .
 
-## on Master03 
+## 8- on Master03 
 
 kubeadm join 192.168.56.14:6443 --token dcbil8.9i3jmt2trcrq6b4q --discovery-token-ca-cert-hash sha256:ac5a11b7426958fc6000d4c41f18803f7b8c4aa2f2ccb08e73071b8e1f662575 --control-plane   --certificate-key 0b84f3882a2419d7f6c62946249d8e40ac89a364a190b22384bd66a05acacf60   --apiserver-advertise-address=192.168.56.17
 
-## on worker01  & worker02 
+## 9- on worker01  & worker02 
 
 kubeadm join 192.168.56.14:6443 --token dcbil8.9i3jmt2trcrq6b4q --discovery-token-ca-cert-hash sha256:ac5a11b7426958fc6000d4c41f18803f7b8c4aa2f2ccb08e73071b8e1f662575
 
@@ -218,8 +229,9 @@ All control-plane pods (etcd, kube-apiserver, controller-manager, scheduler) sho
 
 <img width="975" height="380" alt="image" src="https://github.com/user-attachments/assets/a4a21f31-f807-4723-ba86-dc1de35b1186" />
 
+### issues : 
 
-### when add the second master and can not connect with etcd of the first master , we can fixed it by : 
+### When add the second master and can not connect with etcd of the first master , we can fixed it by : 
 
 ==> Resetting Kubernetes Cluster on the master .
 
@@ -247,7 +259,7 @@ and after that
 
 ### Re-initialize the cluster on master01 
 
-1- sudo kubeadm init --control-plane-endpoint <VIP_or_IP>:6443 --pod-network-cidr=10.244.0.0/16
+1- sudo kubeadm init --control-plane-endpoint 192.168.56.14:6443 --pod-network-cidr=10.244.0.0/16
 
 (replace with your HA IP if you’re using a load balancer, otherwise use master IP)
 
